@@ -1,8 +1,8 @@
 package controllers
 
 import (
-	"assignment-project-rest-api/database"
-	"assignment-project-rest-api/models"
+	"basic-trade/database"
+	"basic-trade/models"
 	"fmt"
 	"net/http"
 	"strconv"

@@ -1,4 +1,4 @@
-module assignment-project-rest-api
+module basic-trade
 
 go 1.20
 

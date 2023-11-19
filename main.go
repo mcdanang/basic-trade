@@ -1,8 +1,8 @@
 package main
 
 import (
-	"assignment-project-rest-api/database"
-	"assignment-project-rest-api/routers"
+	"basic-trade/database"
+	"basic-trade/routers"
 )
 
 func main() {

@@ -1,7 +1,7 @@
 package database
 
 import (
-	"assignment-project-rest-api/models"
+	"basic-trade/models"
 	"fmt"
 	"log"
 	"os"
@@ -35,7 +35,7 @@ func StartDB() {
 		log.Fatal("error connecting to database: ", err)
 	}
 
-	db.Debug().AutoMigrate(models.Order{}, models.Item{})
+	db.Debug().AutoMigrate(models.Order{}, models.Item{}, models.Product{})
 
 }
 
