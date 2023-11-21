@@ -9,9 +9,11 @@ import (
 func StartServer() *gin.Engine {
 	router := gin.Default()
 
-	// router.POST("/orders", controllers.CreateOrder)
-
-	router.GET("/products", controllers.GetAllProduct)
+	productRouter := router.Group("/products")
+	{
+		productRouter.POST("/", controllers.CreateProduct)
+		productRouter.GET("/", controllers.GetAllProduct)
+	}
 
 	// router.PUT("/orders/:orderID", controllers.UpdateOrder)
 

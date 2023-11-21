@@ -2,39 +2,33 @@ package controllers
 
 import (
 	"basic-trade/database"
-	"basic-trade/models"
+	models "basic-trade/models/entity"
+	requests "basic-trade/models/request"
 	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
 
-// func CreateOrder(ctx *gin.Context) {
-// 	db := database.GetDB()
-// 	if db == nil {
-// 		fmt.Println("Error: Database connection is nil.")
-// 		return
-// 	}
+func CreateProduct(ctx *gin.Context) {
+	db := database.GetDB()
+	if db == nil {
+		fmt.Println("Error: Database connection is nil.")
+		return
+	}
 
-// 	var newOrder models.Order
+	var productReq requests.ProductRequest
 
-// 	if err := ctx.ShouldBindJSON(&newOrder); err != nil {
-// 		ctx.AbortWithError(http.StatusBadRequest, err)
-// 		return
-// 	}
+	if err := ctx.ShouldBind(&productReq); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
 
-// 	err := db.Create(&newOrder).Error
-
-// 	if err != nil {
-// 		fmt.Println("Error creating order: ", err)
-// 		return
-// 	}
-
-// 	ctx.JSON(http.StatusOK, gin.H{
-// 		"data":    newOrder,
-// 		"message": "succeed create order",
-// 	})
-// }
+	ctx.JSON(http.StatusOK, gin.H{
+		"data":    productReq,
+		"message": "succeed create product",
+	})
+}
 
 func GetAllProduct(ctx *gin.Context) {
 	db := database.GetDB()

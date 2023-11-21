@@ -1,7 +1,7 @@
 package database
 
 import (
-	"basic-trade/models"
+	models "basic-trade/models/entity"
 	"fmt"
 	"log"
 	"os"
@@ -35,7 +35,7 @@ func StartDB() {
 		log.Fatal("error connecting to database: ", err)
 	}
 
-	db.Debug().AutoMigrate(models.Order{}, models.Item{}, models.Product{})
+	db.Debug().AutoMigrate(models.Product{}, models.Variant{}, models.Admin{})
 
 }
 
