@@ -23,7 +23,7 @@ func StartServer() *gin.Engine {
 		productRouter.POST("/", controllers.CreateProduct)
 		productRouter.GET("/", controllers.GetAllProduct)
 		productRouter.GET("/:productUUID", controllers.GetProductByUUID)
-		// productRouter.PUT("/:productUUID", controllers.UpdateProduct)
+		productRouter.PUT("/:productUUID", controllers.UpdateProduct)
 		productRouter.DELETE("/:productUUID", controllers.DeleteProduct)
 	}
 
