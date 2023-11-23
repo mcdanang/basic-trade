@@ -2,12 +2,15 @@ package controllers
 
 import (
 	"basic-trade/database"
+	"basic-trade/helpers"
 	models "basic-trade/models/entity"
 	requests "basic-trade/models/request"
 	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
+	"gorm.io/gorm"
 )
 
 func CreateProduct(ctx *gin.Context) {
@@ -21,6 +24,31 @@ func CreateProduct(ctx *gin.Context) {
 
 	if err := ctx.ShouldBind(&productReq); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	// Extract the filename without extension
+	fileName := helpers.RemoveExtension(productReq.Image.Filename)
+
+	uploadResult, err := helpers.UploadFile(productReq.Image, fileName)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	Product := models.Product{
+		UUID:     uuid.NewString(),
+		Name:     productReq.Name,
+		ImageURL: uploadResult,
+		// AdminID:  adminID,
+	}
+
+	err = db.Debug().Create(&Product).Error
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"error":   "Bad request",
+			"message": err.Error(),
+		})
 		return
 	}
 
@@ -38,7 +66,10 @@ func GetAllProduct(ctx *gin.Context) {
 	err := db.Find(&products).Error
 
 	if err != nil {
-		fmt.Println("Error getting product data:", err.Error())
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"error":   "Bad request",
+			"message": fmt.Sprintf("Error getting all product: %v", err.Error()),
+		})
 		return
 	}
 
@@ -48,9 +79,31 @@ func GetAllProduct(ctx *gin.Context) {
 	})
 }
 
-// func UpdateOrder(ctx *gin.Context) {
+func GetProductByUUID(ctx *gin.Context) {
+	db := database.GetDB()
+
+	Product := models.Product{}
+	productUUID := ctx.Param("productUUID")
+	// err := db.Preload("Items").Find(&products).Error
+	err := db.Where("uuid = ?", productUUID).First(&Product).Error
+
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"error":   "Bad request",
+			"message": fmt.Sprintf("Error getting product: %v", err.Error()),
+		})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"data":    Product,
+		"message": "succeed get product",
+	})
+}
+
+// func UpdateProduct(ctx *gin.Context) {
 // 	db := database.GetDB()
-// 	orderID := ctx.Param("orderID")
+// 	productUUID := ctx.Param("productUUID")
 // 	// condition := false
 
 // 	updatedOrder := models.Order{}
@@ -125,39 +178,39 @@ func GetAllProduct(ctx *gin.Context) {
 // 	})
 // }
 
-// func DeleteOrder(ctx *gin.Context) {
-// 	db := database.GetDB()
-// 	orderID := ctx.Param("orderID")
+func DeleteProduct(ctx *gin.Context) {
+	db := database.GetDB()
+	productUUID := ctx.Param("productUUID")
 
-// 	order := models.Order{}
-// 	item := models.Item{}
+	// item := models.Item{}
+	Product := models.Product{}
 
-// 	var err error
+	var err error
 
-// 	db.Transaction(func(tx *gorm.DB) error {
+	db.Transaction(func(tx *gorm.DB) error {
 
-// 		if err = tx.Where("order_id = ?", orderID).Delete(&item).Error; err != nil {
-// 			return err
-// 		}
+		// if err = tx.Where("order_id = ?", orderID).Delete(&item).Error; err != nil {
+		// 	return err
+		// }
 
-// 		if err = tx.Where("id = ?", orderID).Delete(&order).Error; err != nil {
-// 			return err
-// 		}
+		if err = tx.Where("uuid = ?", productUUID).Delete(&Product).Error; err != nil {
+			return err
+		}
 
-// 		return nil
-// 	})
+		return nil
+	})
 
-// 	if err != nil {
-// 		ctx.AbortWithStatusJSON(http.StatusNotFound, gin.H{
-// 			"data":    nil,
-// 			"message": fmt.Sprintf("Error deleting order: %v", err.Error()),
-// 		})
-// 		return
-// 	}
+	if err != nil {
+		ctx.AbortWithStatusJSON(http.StatusNotFound, gin.H{
+			"data":    nil,
+			"message": fmt.Sprintf("Error deleting product: %v", err.Error()),
+		})
+		return
+	}
 
-// 	ctx.JSON(http.StatusOK, gin.H{
-// 		"data":    nil,
-// 		"message": fmt.Sprintf("Order with id %v has been successfully deleted", orderID),
-// 	})
+	ctx.JSON(http.StatusOK, gin.H{
+		"data":    nil,
+		"message": fmt.Sprintf("Product with uuid %v has been successfully deleted", productUUID),
+	})
 
-// }
+}
