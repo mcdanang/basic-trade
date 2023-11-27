@@ -1,13 +1,17 @@
 package entity
 
-import "time"
+import (
+	"time"
+
+	"github.com/google/uuid"
+)
 
 type Variant struct {
-	ID          uint64 `json:"id" gorm:"primaryKey"`
-	UUID        string `json:"uuid" gorm:"not null"`
-	VariantName string `json:"variant_name" gorm:"not null;unique"`
-	Quantity    int    `json:"quantity" gorm:"not null"`
-	ProductID   string
-	CreatedAt   time.Time `json:"created_at,omitempty"`
-	UpdatedAt   time.Time `json:"updated_at,omitempty"`
+	ID          uint64    `form:"id" gorm:"primaryKey"`
+	UUID        uuid.UUID `form:"uuid" gorm:"type:varchar(100)"`
+	VariantName string    `form:"variant_name" gorm:"not null;unique"`
+	Quantity    int       `form:"quantity" gorm:"not null"`
+	ProductUUID string    `form:"product_id" gorm:"type:varchar(100)"`
+	CreatedAt   time.Time `form:"created_at,omitempty"`
+	UpdatedAt   time.Time `form:"updated_at,omitempty"`
 }

@@ -9,17 +9,14 @@ import (
 func StartServer() *gin.Engine {
 	router := gin.Default()
 
-	variantRouter := router.Group("/products/variant")
+	productRouter := router.Group("/products")
 	{
-		// variantRouter.POST("/", controllers.CreateProduct)
-		variantRouter.GET("/", controllers.GetAllVariant)
+		productRouter.POST("/variants", controllers.CreateVariant)
+		productRouter.GET("/variants", controllers.GetAllVariant)
 		// variantRouter.GET("/:productUUID", controllers.GetProductByUUID)
 		// variantRouter.PUT("/:productUUID", controllers.UpdateProduct)
 		// variantRouter.DELETE("/:productUUID", controllers.DeleteProduct)
-	}
 
-	productRouter := router.Group("/products")
-	{
 		productRouter.POST("/", controllers.CreateProduct)
 		productRouter.GET("/", controllers.GetAllProduct)
 		productRouter.GET("/:productUUID", controllers.GetProductByUUID)

@@ -13,10 +13,6 @@ import (
 	"gorm.io/gorm"
 )
 
-var (
-	appJSON = "application/json"
-)
-
 func CreateProduct(ctx *gin.Context) {
 	db := database.GetDB()
 	if db == nil {
@@ -41,7 +37,7 @@ func CreateProduct(ctx *gin.Context) {
 	}
 
 	Product := models.Product{
-		UUID:     uuid.NewString(),
+		UUID:     uuid.New(),
 		Name:     productReq.Name,
 		ImageURL: uploadResult,
 		// AdminID:  adminID,
@@ -110,33 +106,22 @@ func UpdateProduct(ctx *gin.Context) {
 	productUUID := ctx.Param("productUUID")
 	// condition := false
 
-	updatedProduct := models.Product{}
+	var productReq requests.ProductRequest
 	// updatedItems := models.Item{}
 
-	contentType := helpers.GetContentType(ctx)
-
-	if contentType == appJSON {
-		if err := ctx.ShouldBindJSON(&updatedProduct); err != nil {
-			fmt.Println(updatedProduct)
-			ctx.AbortWithError(http.StatusBadRequest, err)
-			return
-		}
-	} else {
-		if err := ctx.ShouldBind(&updatedProduct); err != nil {
-			fmt.Println(updatedProduct)
-			ctx.AbortWithError(http.StatusBadRequest, err)
-			return
-		}
-	}
-
-	if err := ctx.ShouldBindJSON(&updatedProduct); err != nil {
-		fmt.Println(updatedProduct)
-		ctx.AbortWithError(http.StatusBadRequest, err)
+	if err := ctx.ShouldBind(&productReq); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	err := db.Model(&updatedProduct).Where("uuid = ?", productUUID).Updates(models.Product{
-		Name: updatedProduct.Name,
+	Product := models.Product{
+		Name: productReq.Name,
+		// ImageURL: uploadResult,
+		// AdminID:  adminID,
+	}
+
+	err := db.Model(&Product).Where("uuid = ?", productUUID).Updates(models.Product{
+		Name: productReq.Name,
 	}).Error
 
 	if err != nil {

@@ -7,52 +7,39 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 )
 
-// func CreateProduct(ctx *gin.Context) {
-// 	db := database.GetDB()
-// 	if db == nil {
-// 		fmt.Println("Error: Database connection is nil.")
-// 		return
-// 	}
+func CreateVariant(ctx *gin.Context) {
+	db := database.GetDB()
+	if db == nil {
+		fmt.Println("Error: Database connection is nil.")
+		return
+	}
 
-// 	var productReq requests.ProductRequest
+	var Variant models.Variant
 
-// 	if err := ctx.ShouldBind(&productReq); err != nil {
-// 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-// 		return
-// 	}
+	if err := ctx.ShouldBind(&Variant); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
 
-// 	// Extract the filename without extension
-// 	fileName := helpers.RemoveExtension(productReq.Image.Filename)
+	Variant.UUID = uuid.New()
 
-// 	uploadResult, err := helpers.UploadFile(productReq.Image, fileName)
-// 	if err != nil {
-// 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-// 		return
-// 	}
+	err := db.Debug().Create(&Variant).Error
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"error":   "Bad request",
+			"message": err.Error(),
+		})
+		return
+	}
 
-// 	Product := models.Product{
-// 		UUID:     uuid.NewString(),
-// 		Name:     productReq.Name,
-// 		ImageURL: uploadResult,
-// 		// AdminID:  adminID,
-// 	}
-
-// 	err = db.Debug().Create(&Product).Error
-// 	if err != nil {
-// 		ctx.JSON(http.StatusBadRequest, gin.H{
-// 			"error":   "Bad request",
-// 			"message": err.Error(),
-// 		})
-// 		return
-// 	}
-
-// 	ctx.JSON(http.StatusOK, gin.H{
-// 		"data":    productReq,
-// 		"message": "succeed create product",
-// 	})
-// }
+	ctx.JSON(http.StatusOK, gin.H{
+		"data":    Variant,
+		"message": "succeed create variant",
+	})
+}
 
 func GetAllVariant(ctx *gin.Context) {
 	db := database.GetDB()
@@ -102,45 +89,43 @@ func GetAllVariant(ctx *gin.Context) {
 // 	productUUID := ctx.Param("productUUID")
 // 	// condition := false
 
-// 	updatedOrder := models.Order{}
-// 	updatedItems := models.Item{}
+// 	var productReq requests.ProductRequest
+// 	// updatedItems := models.Item{}
 
-// 	if err := ctx.ShouldBindJSON(&updatedOrder); err != nil {
-// 		ctx.AbortWithError(http.StatusBadRequest, err)
+// 	if err := ctx.ShouldBind(&productReq); err != nil {
+// 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 // 		return
 // 	}
 
-// 	orderIDUint, e := strconv.ParseUint(orderID, 10, 64)
-// 	if e != nil {
-// 		fmt.Println("Error parsing orderID from URL params", e)
-// 		return
+// 	Product := models.Product{
+// 		Name: productReq.Name,
+// 		// ImageURL: uploadResult,
+// 		// AdminID:  adminID,
 // 	}
 
-// 	err := db.Model(&updatedOrder).Where("id = ?", orderID).Updates(models.Order{
-// 		ID:           orderIDUint,
-// 		CustomerName: updatedOrder.CustomerName,
-// 		OrderedAt:    updatedOrder.OrderedAt,
+// 	err := db.Model(&Product).Where("uuid = ?", productUUID).Updates(models.Product{
+// 		Name: productReq.Name,
 // 	}).Error
 
 // 	if err != nil {
-// 		fmt.Println("Error updating order data:", err)
+// 		fmt.Println("Error updating product data:", err)
 // 		return
 // 	}
 
-// 	for _, item := range updatedOrder.Items {
-// 		err := db.Model(&updatedItems).Where("order_id = ?", orderID).Updates(models.Item{
-// 			Name:        item.Name,
-// 			Description: item.Description,
-// 			Quantity:    item.Quantity,
-// 		}).Error
+// 	// for _, item := range updatedOrder.Items {
+// 	// 	err := db.Model(&updatedItems).Where("order_id = ?", orderID).Updates(models.Item{
+// 	// 		Name:        item.Name,
+// 	// 		Description: item.Description,
+// 	// 		Quantity:    item.Quantity,
+// 	// 	}).Error
 
-// 		if err != nil {
-// 			fmt.Println("Error updating item data:", err)
-// 			return
-// 		}
-// 	}
+// 	// 	if err != nil {
+// 	// 		fmt.Println("Error updating item data:", err)
+// 	// 		return
+// 	// 	}
+// 	// }
 
-// 	fmt.Printf("Updated order 2: %+v \n", updatedOrder)
+// 	// fmt.Printf("Updated order 2: %+v \n", updatedOrder)
 
 // 	// bookID := ctx.Param("bookID")
 // 	// condition := false
@@ -170,7 +155,7 @@ func GetAllVariant(ctx *gin.Context) {
 
 // 	// convertBookId, _ := strconv.Atoi(bookID)
 // 	ctx.JSON(http.StatusOK, gin.H{
-// 		"message": fmt.Sprintf("Order with id %v has been successfully updated", orderID),
+// 		"message": fmt.Sprintf("Product with uuid %v has been successfully updated", productUUID),
 // 	})
 // }
 

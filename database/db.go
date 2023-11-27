@@ -35,7 +35,7 @@ func StartDB() {
 		log.Fatal("error connecting to database: ", err)
 	}
 
-	db.Debug().AutoMigrate(models.Product{}, models.Variant{}, models.Admin{})
+	db.Debug().AutoMigrate(&models.Product{}, &models.Variant{}, &models.Admin{})
 
 }
 
