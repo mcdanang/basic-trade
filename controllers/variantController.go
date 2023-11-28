@@ -24,7 +24,7 @@ func CreateVariant(ctx *gin.Context) {
 		return
 	}
 
-	Variant.UUID = uuid.New()
+	Variant.UUID = uuid.NewString()
 
 	err := db.Debug().Create(&Variant).Error
 	if err != nil {

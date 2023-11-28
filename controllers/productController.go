@@ -37,7 +37,7 @@ func CreateProduct(ctx *gin.Context) {
 	}
 
 	Product := models.Product{
-		UUID:     uuid.New(),
+		UUID:     uuid.NewString(),
 		Name:     productReq.Name,
 		ImageURL: uploadResult,
 		// AdminID:  adminID,
