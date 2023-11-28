@@ -8,7 +8,7 @@ import (
 
 type Product struct {
 	ID        uint64    `json:"id" gorm:"primaryKey"`
-	UUID      uuid.UUID `json:"uuid" gorm:"type:varchar(191)"`
+	UUID      uuid.UUID `json:"uuid" gorm:"type:varchar(191);uniqueIndex"`
 	Name      string    `json:"name" gorm:"not null;unique"`
 	ImageURL  string    `json:"image_url"`
 	AdminID   uint
