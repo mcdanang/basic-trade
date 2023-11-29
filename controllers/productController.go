@@ -9,7 +9,6 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
@@ -37,7 +36,6 @@ func CreateProduct(ctx *gin.Context) {
 	}
 
 	Product := models.Product{
-		UUID:     uuid.NewString(),
 		Name:     productReq.Name,
 		ImageURL: uploadResult,
 		// AdminID:  adminID,

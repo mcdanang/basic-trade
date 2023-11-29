@@ -7,7 +7,6 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
@@ -24,8 +23,6 @@ func CreateVariant(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-
-	Variant.UUID = uuid.NewString()
 
 	err := db.Debug().Create(&Variant).Error
 	if err != nil {
@@ -113,20 +110,15 @@ func UpdateVariant(ctx *gin.Context) {
 
 func DeleteVariant(ctx *gin.Context) {
 	db := database.GetDB()
-	productUUID := ctx.Param("productUUID")
+	variantUUID := ctx.Param("variantUUID")
 
 	Variant := models.Variant{}
-	Product := models.Product{}
 
 	var err error
 
 	db.Transaction(func(tx *gorm.DB) error {
 
-		if err = tx.Where("product_uuid = ?", productUUID).Delete(&Variant).Error; err != nil {
-			return err
-		}
-
-		if err = tx.Where("uuid = ?", productUUID).Delete(&Product).Error; err != nil {
+		if err = tx.Where("uuid = ?", variantUUID).Delete(&Variant).Error; err != nil {
 			return err
 		}
 
@@ -136,14 +128,14 @@ func DeleteVariant(ctx *gin.Context) {
 	if err != nil {
 		ctx.AbortWithStatusJSON(http.StatusNotFound, gin.H{
 			"data":    nil,
-			"message": fmt.Sprintf("Error deleting product: %v", err.Error()),
+			"message": fmt.Sprintf("Error deleting variant: %v", err.Error()),
 		})
 		return
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{
 		"data":    nil,
-		"message": fmt.Sprintf("Product with uuid %v has been successfully deleted", productUUID),
+		"message": fmt.Sprintf("Variant with uuid %v has been successfully deleted", variantUUID),
 	})
 
 }
