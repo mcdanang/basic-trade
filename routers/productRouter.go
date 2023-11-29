@@ -13,9 +13,9 @@ func StartServer() *gin.Engine {
 	{
 		productRouter.POST("/variants", controllers.CreateVariant)
 		productRouter.GET("/variants", controllers.GetAllVariant)
-		// variantRouter.GET("/:productUUID", controllers.GetProductByUUID)
-		// variantRouter.PUT("/:productUUID", controllers.UpdateProduct)
-		// variantRouter.DELETE("/:productUUID", controllers.DeleteProduct)
+		productRouter.GET("/variants/:variantUUID", controllers.GetVariantByUUID)
+		productRouter.PUT("/variants/:variantUUID", controllers.UpdateVariant)
+		productRouter.DELETE("/variants/:variantUUID", controllers.DeleteVariant)
 
 		productRouter.POST("/", controllers.CreateProduct)
 		productRouter.GET("/", controllers.GetAllProduct)

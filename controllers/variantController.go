@@ -8,6 +8,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"gorm.io/gorm"
 )
 
 func CreateVariant(ctx *gin.Context) {
@@ -62,136 +63,87 @@ func GetAllVariant(ctx *gin.Context) {
 	})
 }
 
-// func GetProductByUUID(ctx *gin.Context) {
-// 	db := database.GetDB()
+func GetVariantByUUID(ctx *gin.Context) {
+	db := database.GetDB()
 
-// 	Product := models.Product{}
-// 	productUUID := ctx.Param("productUUID")
-// 	// err := db.Preload("Items").Find(&products).Error
-// 	err := db.Where("uuid = ?", productUUID).First(&Product).Error
+	Variant := models.Variant{}
+	variantUUID := ctx.Param("variantUUID")
+	// err := db.Preload("Items").Find(&products).Error
+	err := db.Where("uuid = ?", variantUUID).First(&Variant).Error
 
-// 	if err != nil {
-// 		ctx.JSON(http.StatusBadRequest, gin.H{
-// 			"error":   "Bad request",
-// 			"message": fmt.Sprintf("Error getting product: %v", err.Error()),
-// 		})
-// 		return
-// 	}
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"error":   "Bad request",
+			"message": fmt.Sprintf("Error getting variant: %v", err.Error()),
+		})
+		return
+	}
 
-// 	ctx.JSON(http.StatusOK, gin.H{
-// 		"data":    Product,
-// 		"message": "succeed get product",
-// 	})
-// }
+	ctx.JSON(http.StatusOK, gin.H{
+		"data":    Variant,
+		"message": "succeed get variant",
+	})
+}
 
-// func UpdateProduct(ctx *gin.Context) {
-// 	db := database.GetDB()
-// 	productUUID := ctx.Param("productUUID")
-// 	// condition := false
+func UpdateVariant(ctx *gin.Context) {
+	db := database.GetDB()
+	variantUUID := ctx.Param("variantUUID")
 
-// 	var productReq requests.ProductRequest
-// 	// updatedItems := models.Item{}
+	var Variant models.Variant
 
-// 	if err := ctx.ShouldBind(&productReq); err != nil {
-// 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-// 		return
-// 	}
+	if err := ctx.ShouldBind(&Variant); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
 
-// 	Product := models.Product{
-// 		Name: productReq.Name,
-// 		// ImageURL: uploadResult,
-// 		// AdminID:  adminID,
-// 	}
+	err := db.Model(&Variant).Where("uuid = ?", variantUUID).Updates(models.Variant{
+		VariantName: Variant.VariantName,
+		Quantity:    Variant.Quantity,
+	}).Error
 
-// 	err := db.Model(&Product).Where("uuid = ?", productUUID).Updates(models.Product{
-// 		Name: productReq.Name,
-// 	}).Error
+	if err != nil {
+		fmt.Println("Error updating variant data:", err)
+		return
+	}
 
-// 	if err != nil {
-// 		fmt.Println("Error updating product data:", err)
-// 		return
-// 	}
+	ctx.JSON(http.StatusOK, gin.H{
+		"message": fmt.Sprintf("Variant with uuid %v has been successfully updated", variantUUID),
+	})
+}
 
-// 	// for _, item := range updatedOrder.Items {
-// 	// 	err := db.Model(&updatedItems).Where("order_id = ?", orderID).Updates(models.Item{
-// 	// 		Name:        item.Name,
-// 	// 		Description: item.Description,
-// 	// 		Quantity:    item.Quantity,
-// 	// 	}).Error
+func DeleteVariant(ctx *gin.Context) {
+	db := database.GetDB()
+	productUUID := ctx.Param("productUUID")
 
-// 	// 	if err != nil {
-// 	// 		fmt.Println("Error updating item data:", err)
-// 	// 		return
-// 	// 	}
-// 	// }
+	Variant := models.Variant{}
+	Product := models.Product{}
 
-// 	// fmt.Printf("Updated order 2: %+v \n", updatedOrder)
+	var err error
 
-// 	// bookID := ctx.Param("bookID")
-// 	// condition := false
-// 	// var updatedBook Book
+	db.Transaction(func(tx *gorm.DB) error {
 
-// 	// if err := ctx.ShouldBindJSON(&updatedBook); err != nil {
-// 	// 	ctx.AbortWithError(http.StatusBadRequest, err)
-// 	// 	return
-// 	// }
+		if err = tx.Where("product_uuid = ?", productUUID).Delete(&Variant).Error; err != nil {
+			return err
+		}
 
-// 	// for i, book := range BookDatas {
-// 	// 	if bookID == book.BookID {
-// 	// 		condition = true
-// 	// 		BookDatas[i] = updatedBook
-// 	// 		BookDatas[i].BookID = bookID
-// 	// 		break
-// 	// 	}
-// 	// }
+		if err = tx.Where("uuid = ?", productUUID).Delete(&Product).Error; err != nil {
+			return err
+		}
 
-// 	// if !condition {
-// 	// 	ctx.AbortWithStatusJSON(http.StatusNotFound, gin.H{
-// 	// 		"data":    nil,
-// 	// 		"message": fmt.Sprintf("book with id %v not found", bookID),
-// 	// 	})
-// 	// 	return
-// 	// }
+		return nil
+	})
 
-// 	// convertBookId, _ := strconv.Atoi(bookID)
-// 	ctx.JSON(http.StatusOK, gin.H{
-// 		"message": fmt.Sprintf("Product with uuid %v has been successfully updated", productUUID),
-// 	})
-// }
+	if err != nil {
+		ctx.AbortWithStatusJSON(http.StatusNotFound, gin.H{
+			"data":    nil,
+			"message": fmt.Sprintf("Error deleting product: %v", err.Error()),
+		})
+		return
+	}
 
-// func DeleteProduct(ctx *gin.Context) {
-// 	db := database.GetDB()
-// 	productUUID := ctx.Param("productUUID")
+	ctx.JSON(http.StatusOK, gin.H{
+		"data":    nil,
+		"message": fmt.Sprintf("Product with uuid %v has been successfully deleted", productUUID),
+	})
 
-// 	// item := models.Item{}
-// 	Product := models.Product{}
-
-// 	var err error
-
-// 	db.Transaction(func(tx *gorm.DB) error {
-
-// 		// if err = tx.Where("order_id = ?", orderID).Delete(&item).Error; err != nil {
-// 		// 	return err
-// 		// }
-
-// 		if err = tx.Where("uuid = ?", productUUID).Delete(&Product).Error; err != nil {
-// 			return err
-// 		}
-
-// 		return nil
-// 	})
-
-// 	if err != nil {
-// 		ctx.AbortWithStatusJSON(http.StatusNotFound, gin.H{
-// 			"data":    nil,
-// 			"message": fmt.Sprintf("Error deleting product: %v", err.Error()),
-// 		})
-// 		return
-// 	}
-
-// 	ctx.JSON(http.StatusOK, gin.H{
-// 		"data":    nil,
-// 		"message": fmt.Sprintf("Product with uuid %v has been successfully deleted", productUUID),
-// 	})
-
-// }
+}
