@@ -1,0 +1,548 @@
+{
+	"info": {
+		"_postman_id": "489fbbc8-7f65-4663-8d10-b0fbf5039499",
+		"name": "Base Trade API - Muhamad Danang Priambodo",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "17491289",
+		"_collection_link": "https://mcd-14045-team.postman.co/workspace/golang~022fd595-0301-41fa-a276-b9a904a5fc95/collection/17491289-489fbbc8-7f65-4663-8d10-b0fbf5039499?action=share&source=collection_link&creator=17491289"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Register",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "email",
+									"value": "fitri@mail.com",
+									"type": "text"
+								},
+								{
+									"key": "name",
+									"value": "Fitri Ayu",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "12345678",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://basic-trade-danang.up.railway.app/auth/register",
+							"protocol": "https",
+							"host": [
+								"basic-trade-danang",
+								"up",
+								"railway",
+								"app"
+							],
+							"path": [
+								"auth",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "email",
+									"value": "fitri@mail.com",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "12345678",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://basic-trade-danang.up.railway.app/auth/login",
+							"protocol": "https",
+							"host": [
+								"basic-trade-danang",
+								"up",
+								"railway",
+								"app"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Products",
+			"item": [
+				{
+					"name": "Variants",
+					"item": [
+						{
+							"name": "Get All",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://basic-trade-danang.up.railway.app/products/variants?name=e&page=1&size=2",
+									"protocol": "https",
+									"host": [
+										"basic-trade-danang",
+										"up",
+										"railway",
+										"app"
+									],
+									"path": [
+										"products",
+										"variants"
+									],
+									"query": [
+										{
+											"key": "name",
+											"value": "e"
+										},
+										{
+											"key": "page",
+											"value": "1"
+										},
+										{
+											"key": "size",
+											"value": "2"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get by UUID",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://basic-trade-danang.up.railway.app/products/variants/:uuid",
+									"protocol": "https",
+									"host": [
+										"basic-trade-danang",
+										"up",
+										"railway",
+										"app"
+									],
+									"path": [
+										"products",
+										"variants",
+										":uuid"
+									],
+									"variable": [
+										{
+											"key": "uuid",
+											"value": "a23944c3-4cd1-47c6-a832-b9ecf46e6269"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImZpdHJpQG1haWwuY29tIiwiZXhwIjoiMjAyMy0xMS0zMFQxNTozNDoyMy43NTEyNjA0OTRaIiwidXVpZCI6IjFmMDZjOTdkLTZhOTItNDQ3MC1iNDQxLTQ2ZDMxZWZmZmZjZSJ9.8yzXik_7zSdC-R7iWwIhGFOCpmBStDIrpqIovZXZU00",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "variant_name",
+											"value": "White",
+											"type": "text"
+										},
+										{
+											"key": "quantity",
+											"value": "20",
+											"type": "text"
+										},
+										{
+											"key": "product_uuid",
+											"value": "3bae4bd8-c7e7-4716-a617-617fea87c4a1",
+											"description": "uuid of product",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "https://basic-trade-danang.up.railway.app/products/variants",
+									"protocol": "https",
+									"host": [
+										"basic-trade-danang",
+										"up",
+										"railway",
+										"app"
+									],
+									"path": [
+										"products",
+										"variants"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImZpdHJpQG1haWwuY29tIiwiZXhwIjoiMjAyMy0xMS0zMFQyMDozMDowNy44MDk5NyswNzowMCIsInV1aWQiOiJjMDU1NWRlMy1lYmZlLTQ2OTYtOWJmNC0xYmUyMTNlZmViZDMifQ.zJtzKUHPXipO0Rs-9XYhs0O_5PPiPd7M5DS3nFYEWXg",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "variant_name",
+											"value": "Blue",
+											"description": "string",
+											"type": "text"
+										},
+										{
+											"key": "quantity",
+											"value": "22",
+											"description": "integer",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "https://basic-trade-danang.up.railway.app/products/variants/:uuid",
+									"protocol": "https",
+									"host": [
+										"basic-trade-danang",
+										"up",
+										"railway",
+										"app"
+									],
+									"path": [
+										"products",
+										"variants",
+										":uuid"
+									],
+									"variable": [
+										{
+											"key": "uuid",
+											"value": "42e25512-dcd1-4642-88f6-e3c52a3ff985"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImZpdHJpQG1haWwuY29tIiwiZXhwIjoiMjAyMy0xMS0zMFQyMDoyMToxMS45OTM2NDIrMDc6MDAiLCJ1dWlkIjoiYzA1NTVkZTMtZWJmZS00Njk2LTliZjQtMWJlMjEzZWZlYmQzIn0.1b4_7LG83RQ0xKM6MVYVsLK6qRaCY9cxQf0xSxe4cr8",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "https://basic-trade-danang.up.railway.app/products/variants/:uuid",
+									"protocol": "https",
+									"host": [
+										"basic-trade-danang",
+										"up",
+										"railway",
+										"app"
+									],
+									"path": [
+										"products",
+										"variants",
+										":uuid"
+									],
+									"variable": [
+										{
+											"key": "uuid",
+											"value": "a23944c3-4cd1-47c6-a832-b9ecf46e6269",
+											"description": "uuid of variant"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Get All",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://basic-trade-danang.up.railway.app/products?name=mac&page=1&size=3",
+							"protocol": "https",
+							"host": [
+								"basic-trade-danang",
+								"up",
+								"railway",
+								"app"
+							],
+							"path": [
+								"products"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "mac"
+								},
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "search",
+									"value": "tes",
+									"description": "search by name",
+									"disabled": true
+								},
+								{
+									"key": "size",
+									"value": "3"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get by UUID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://basic-trade-danang.up.railway.app/products/:uuid",
+							"protocol": "https",
+							"host": [
+								"basic-trade-danang",
+								"up",
+								"railway",
+								"app"
+							],
+							"path": [
+								"products",
+								":uuid"
+							],
+							"variable": [
+								{
+									"key": "uuid",
+									"value": "1e87672b-9168-4913-ba56-48e933f85e25"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImZpdHJpQG1haWwuY29tIiwiZXhwIjoiMjAyMy0xMS0zMFQxNTo0MTozOS4yNDcwMDI5NjNaIiwidXVpZCI6IjFmMDZjOTdkLTZhOTItNDQ3MC1iNDQxLTQ2ZDMxZWZmZmZjZSJ9.3BtceNAIY3GdAV0xSsuV1iCTZ2sy9_tEw5OFR29LL38",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "Macbook Air 1",
+									"type": "text"
+								},
+								{
+									"key": "file",
+									"type": "file",
+									"src": "/Users/macbookair/Desktop/25231.png"
+								},
+								{
+									"key": "",
+									"value": "",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "https://basic-trade-danang.up.railway.app/products",
+							"protocol": "https",
+							"host": [
+								"basic-trade-danang",
+								"up",
+								"railway",
+								"app"
+							],
+							"path": [
+								"products"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImZpdHJpQG1haWwuY29tIiwiZXhwIjoiMjAyMy0xMS0zMFQyMDoxNzoyNy41MzYwNDcrMDc6MDAiLCJ1dWlkIjoiYzA1NTVkZTMtZWJmZS00Njk2LTliZjQtMWJlMjEzZWZlYmQzIn0.AKNOG2CQinjgiHuP5sLGCuCXWXnCuJqyyrQs7My4pu0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "Macbook Pro M1",
+									"type": "text"
+								},
+								{
+									"key": "file",
+									"value": "",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "https://basic-trade-danang.up.railway.app/products/:uuid",
+							"protocol": "https",
+							"host": [
+								"basic-trade-danang",
+								"up",
+								"railway",
+								"app"
+							],
+							"path": [
+								"products",
+								":uuid"
+							],
+							"variable": [
+								{
+									"key": "uuid",
+									"value": "1e87672b-9168-4913-ba56-48e933f85e25"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImZpdHJpQG1haWwuY29tIiwiZXhwIjoiMjAyMy0xMS0zMFQyMDoxOToxMy4zNjMzNjYrMDc6MDAiLCJ1dWlkIjoiYzA1NTVkZTMtZWJmZS00Njk2LTliZjQtMWJlMjEzZWZlYmQzIn0.sUcKosiaRZrLEkY886dNGNHw6_d-N_NzJVVcfRU4muY",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "https://basic-trade-danang.up.railway.app/products/:uuid",
+							"protocol": "https",
+							"host": [
+								"basic-trade-danang",
+								"up",
+								"railway",
+								"app"
+							],
+							"path": [
+								"products",
+								":uuid"
+							],
+							"variable": [
+								{
+									"key": "uuid",
+									"value": "1e87672b-9168-4913-ba56-48e933f85e25"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "url",
+			"value": "go-product-variant-production.up.railway.app"
+		}
+	]
+}
