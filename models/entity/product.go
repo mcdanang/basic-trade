@@ -11,7 +11,7 @@ import (
 type Product struct {
 	ID        uint64    `json:"id" gorm:"primaryKey"`
 	UUID      string    `json:"uuid" gorm:"type:varchar(191);uniqueIndex"`
-	Name      string    `json:"name" gorm:"not null;unique"`
+	Name      string    `json:"name" gorm:"not null;unique" valid:"required~product name is required"`
 	ImageURL  string    `json:"image_url"`
 	AdminUUID string    `json:"admin_uuid" form:"admin_uuid" gorm:"type:varchar(191);constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	Variants  []Variant `json:"variants" gorm:"foreignKey:ProductUUID;references:UUID"`

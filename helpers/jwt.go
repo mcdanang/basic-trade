@@ -12,9 +12,9 @@ import (
 
 var secretKey = os.Getenv("JWT_SECRET_KEY")
 
-func GenerateToken(id uint, email string) string {
+func GenerateToken(uuid string, email string) string {
 	claims := jwt.MapClaims{
-		"id":    id,
+		"uuid":  uuid,
 		"email": email,
 		"exp":   time.Now().Add(time.Minute * 1),
 	}

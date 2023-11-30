@@ -15,10 +15,10 @@ func ProductAuthorization() gin.HandlerFunc {
 		productUUID := ctx.Param("productUUID")
 
 		adminData := ctx.MustGet("adminData").(jwt5.MapClaims)
-		adminID := adminData["id"]
+		adminUUID := adminData["uuid"]
 
 		var getProduct models.Product
-		err := db.Select("admin_id").Where("uuid = ?", productUUID).First(&getProduct).Error
+		err := db.Select("admin_uuid").Where("uuid = ?", productUUID).First(&getProduct).Error
 		if err != nil {
 			ctx.AbortWithStatusJSON(http.StatusNotFound, gin.H{
 				"error":   err.Error(),
@@ -27,7 +27,7 @@ func ProductAuthorization() gin.HandlerFunc {
 			return
 		}
 
-		if getProduct.AdminUUID != adminID {
+		if getProduct.AdminUUID != adminUUID {
 			ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
 				"error":   "Unauthorized",
 				"message": "You are not allowed to access this data",

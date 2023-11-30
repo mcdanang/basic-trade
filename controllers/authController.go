@@ -71,7 +71,7 @@ func AdminLogin(ctx *gin.Context) {
 		return
 	}
 
-	token := helpers.GenerateToken(Admin.ID, Admin.Email)
+	token := helpers.GenerateToken(Admin.UUID, Admin.Email)
 
 	ctx.JSON(http.StatusOK, gin.H{
 		"token": token,

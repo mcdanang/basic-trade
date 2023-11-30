@@ -4,7 +4,9 @@ import (
 	"basic-trade/database"
 	models "basic-trade/models/entity"
 	"fmt"
+	"math"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
@@ -42,9 +44,24 @@ func CreateVariant(ctx *gin.Context) {
 func GetAllVariant(ctx *gin.Context) {
 	db := database.GetDB()
 
+	paramPairs := ctx.Request.URL.Query()
+	searchWord := ""
+
+	if paramPairs["name"] != nil {
+		searchWord = paramPairs["name"][0]
+	}
+
+	page, _ := strconv.Atoi(ctx.DefaultQuery("page", "1"))
+	size, _ := strconv.Atoi(ctx.DefaultQuery("size", "5"))
+
+	offset := (page - 1) * size
+
 	variants := []models.Variant{}
-	// err := db.Preload("Items").Find(&products).Error
-	err := db.Find(&variants).Error
+
+	var totalItems int64
+	err := db.Where("variant_name LIKE ?", "%"+searchWord+"%").Find(&variants).Count(&totalItems).Error
+
+	err = db.Offset(offset).Limit(size).Where("variant_name LIKE ?", "%"+searchWord+"%").Find(&variants).Error
 
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{
@@ -54,9 +71,13 @@ func GetAllVariant(ctx *gin.Context) {
 		return
 	}
 
+	totalPages := int(math.Ceil(float64(totalItems) / float64(size)))
+
 	ctx.JSON(http.StatusOK, gin.H{
-		"data":    variants,
-		"message": "succeed get all variant",
+		"data":       variants,
+		"totalItems": totalItems,
+		"totalPages": totalPages,
+		"message":    "succeed get all variant",
 	})
 }
 

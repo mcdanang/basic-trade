@@ -6,9 +6,12 @@ import (
 	models "basic-trade/models/entity"
 	requests "basic-trade/models/request"
 	"fmt"
+	"math"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
+	jwt5 "github.com/golang-jwt/jwt/v5"
 	"gorm.io/gorm"
 )
 
@@ -35,10 +38,13 @@ func CreateProduct(ctx *gin.Context) {
 		return
 	}
 
+	adminData := ctx.MustGet("adminData").(jwt5.MapClaims)
+	adminUUID := adminData["uuid"].(string)
+
 	Product := models.Product{
-		Name:     productReq.Name,
-		ImageURL: uploadResult,
-		// AdminID:  adminID,
+		Name:      productReq.Name,
+		ImageURL:  uploadResult,
+		AdminUUID: adminUUID,
 	}
 
 	err = db.Debug().Create(&Product).Error
@@ -59,8 +65,24 @@ func CreateProduct(ctx *gin.Context) {
 func GetAllProduct(ctx *gin.Context) {
 	db := database.GetDB()
 
+	paramPairs := ctx.Request.URL.Query()
+	searchWord := ""
+
+	if paramPairs["name"] != nil {
+		searchWord = paramPairs["name"][0]
+	}
+
+	page, _ := strconv.Atoi(ctx.DefaultQuery("page", "1"))
+	size, _ := strconv.Atoi(ctx.DefaultQuery("size", "5"))
+
+	offset := (page - 1) * size
+
 	products := []models.Product{}
-	err := db.Preload("Variants").Find(&products).Error
+
+	var totalItems int64
+	err := db.Where("name LIKE ?", "%"+searchWord+"%").Find(&products).Count(&totalItems).Error
+
+	err = db.Preload("Variants").Offset(offset).Limit(size).Where("name LIKE ?", "%"+searchWord+"%").Find(&products).Error
 
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{
@@ -70,9 +92,13 @@ func GetAllProduct(ctx *gin.Context) {
 		return
 	}
 
+	totalPages := int(math.Ceil(float64(totalItems) / float64(size)))
+
 	ctx.JSON(http.StatusOK, gin.H{
-		"data":    products,
-		"message": "succeed get all product",
+		"data":       products,
+		"totalItems": totalItems,
+		"totalPages": totalPages,
+		"message":    "succeed get all product",
 	})
 }
 
