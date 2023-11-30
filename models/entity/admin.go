@@ -13,7 +13,7 @@ type Admin struct {
 	ID        uint       `json:"id" gorm:"primaryKey"`
 	UUID      string     `json:"uuid" gorm:"type:varchar(191);uniqueIndex" `
 	Name      string     `json:"name" gorm:"not null" form:"name" valid:"required~Your name is required"`
-	Email     string     `json:"email" gorm:"not null" form:"email" valid:"required~Your email is required, email~Invalid email format"`
+	Email     string     `json:"email" gorm:"not null;unique" form:"email" valid:"required~Your email is required, email~Invalid email format"`
 	Password  string     `json:"password" gorm:"not null" form:"password" valid:"required~Your password is required, minstringlength(6)~Password has to have a minimum length of 6 characters"`
 	Products  []Product  `json:"products" gorm:"foreignKey:AdminUUID;references:UUID"`
 	CreatedAt *time.Time `json:"created_at,omitempty"`
